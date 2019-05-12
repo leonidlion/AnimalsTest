@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import com.dev.leo.animalstest.databinding.ActivityMainBinding;
 import com.dev.leo.animalstest.ui.BaseBindingActivity;
@@ -21,7 +20,6 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjection;
 
 public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainViewModel> {
-    private static final String TAG = "MainActivity";
     private static final String STATE_LAST_POSITION = "STATE_LAST_POSITION";
 
     @Inject ViewModelFactory viewModelFactory;
@@ -36,12 +34,8 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
 
         if (savedInstanceState != null) lastPosition = savedInstanceState.getInt(STATE_LAST_POSITION);
 
-        Log.d(TAG, "onCreate: " + lastPosition + " SIZE: " + getSupportFragmentManager().getFragments().size());
-
         initFragments();
 
-//        if (getSupportFragmentManager().getFragments().size() == 0)
-//            getSupportFragmentManager().beginTransaction().add(R.id.mainFrameLayout, fragments.get(Constants.CAT_LIST), String.valueOf(Constants.CAT_LIST)).commit();
         displayFragment(lastPosition);
 
         binding.tabLayout.getTabAt(lastPosition).select();
@@ -75,22 +69,15 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     }
 
     protected void displayFragment(int currentPosition) {
-        Log.d(TAG, "displayFragment: " + currentPosition);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         Fragment fragment = fragments.get(currentPosition);
         Fragment currentVisibleFragment = fragments.get(lastPosition);
 
-        if (fragment.isAdded()) {
-            Log.d(TAG, "SHOW: " + currentPosition);
-            ft.show(fragment);
-        }
-        else {
-            Log.d(TAG, "ADD: " + currentPosition);
-            ft.add(R.id.mainFrameLayout, fragment, String.valueOf(currentPosition));
-        }
+        if (fragment.isAdded()) ft.show(fragment);
+        else ft.add(R.id.mainFrameLayout, fragment, String.valueOf(currentPosition));
+
         if ((currentPosition != lastPosition) && currentVisibleFragment.isAdded()) {
-            Log.d(TAG, "HIDE: " + lastPosition);
             ft.hide(currentVisibleFragment);
         }
 
